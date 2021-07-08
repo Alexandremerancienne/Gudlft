@@ -57,28 +57,27 @@ def purchase_places():
     club = [club for club in clubs if club["name"] == request.form["club"]][0]
     purchased_places = int(request.form["places"])
 
-    insufficient_places = 'Invalid request: please enter a number of places under competition capacity'
-    insufficient_points = 'Invalid request: please enter a number of places under club points'
+    insufficient_places = 'Invalid request: please enter a number of places under competition capacity'\
+        if purchased_places > int(competition['places']) else ''
 
-    if purchased_places > int(competition['places']) and purchased_places > int(club['points']):
-        return render_template("welcome.html", club=club, competitions=competitions,
-                               insufficient_places=insufficient_places,
-                               insufficient_points=insufficient_points), 403
+    insufficient_points = 'Invalid request: please enter a number of places under club points'\
+        if purchased_places > int(club['points']) else ''
 
-    elif int(competition['places']) < purchased_places <= int(club['points']):
-        return render_template("welcome.html", club=club, competitions=competitions,
-                               insufficient_places=insufficient_places), 403
+    purchase_limit = 'Invalid request: maximum purchase limit of 12 places for a competition'\
+        if purchased_places > 12 else ''
 
-    elif int(competition['places']) >= purchased_places > int(club['points']):
-        return render_template("welcome.html", club=club, competitions=competitions,
-                               insufficient_points=insufficient_points), 403
-
-    else:
+    if purchased_places <= int(competition['places']) and purchased_places <= int(club['points'])\
+            and purchased_places <= 12:
         club['points'] = str(int(club['points']) - purchased_places)
         competition['places'] = str(int(competition['places']) - purchased_places)
         flash("Great-booking complete!")
         return render_template("welcome.html", club=club, competitions=competitions)
 
+    else:
+        return render_template("welcome.html", club=club, competitions=competitions,
+                               insufficient_places=insufficient_places,
+                               insufficient_points=insufficient_points,
+                               purchase_limit=purchase_limit), 403
 
 # TODO: Add route for points display
 
