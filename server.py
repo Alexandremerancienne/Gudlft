@@ -8,16 +8,16 @@ def load_clubs():
         return clubs_list
 
 
-def loadCompetitions():
-    with open("competitions.json") as comps:
-        listOfCompetitions = json.load(comps)["competitions"]
-        return listOfCompetitions
+def load_competitions():
+    with open("competitions.json") as competitions_file:
+        competitions_list = json.load(competitions_file)["competitions"]
+        return competitions_list
 
 
 app = Flask(__name__)
 app.secret_key = "something_special"
 
-competitions = loadCompetitions()
+competitions = load_competitions()
 clubs = load_clubs()
 
 

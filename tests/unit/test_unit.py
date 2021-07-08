@@ -52,3 +52,19 @@ def test_logout_works(client):
     assert response.status_code == 302
     assert "http://localhost/" == response.headers["Location"]
 
+
+def test_select_a_competition_returns_competition_details(auth, client, club, competition):
+    """
+    GIVEN an authenticated test client
+    WHEN the '/book/<competition>/<club>' page is requested (GET)
+    THEN check that:
+    1) A '200' status code is returned
+    2) The response includes the competition name
+    3) The response includes the number of places available
+    """
+    auth.login(club)
+    response = client.get("/book/" + competition["name"] + "/" + club["name"])
+    assert response.status_code == 200
+    assert f"{competition['name']}" in response.get_data(as_text=True)
+    assert f"{int(competition['places'])}" in response.get_data(as_text=True)
+
