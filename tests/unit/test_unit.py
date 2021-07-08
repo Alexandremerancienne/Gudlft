@@ -68,3 +68,16 @@ def test_select_a_competition_returns_competition_details(auth, client, club, co
     assert f"{competition['name']}" in response.get_data(as_text=True)
     assert f"{int(competition['places'])}" in response.get_data(as_text=True)
 
+
+def test_purchase_reduces_club_points_and_competition_places(auth, client, club, competition, affordable_places):
+    """
+    GIVEN an authenticated test client
+    WHEN a POST request is sent to '/purchasePlaces' page to purchase x places
+    THEN check that the number of club points is reduced by x
+    """
+    auth.login(club)
+    response = client.post("/purchasePlaces", data=dict(club=club['name'],
+                                                        competition=competition['name'],
+                                                        places=affordable_places))
+    assert f"Points available: {str(int(club['points']) - affordable_places)}" in response.get_data(as_text=True)
+    assert f"Number of Places: {str(int(competition['places']) - affordable_places)}" in response.get_data(as_text=True)

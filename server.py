@@ -51,15 +51,33 @@ def book(competition, club):
 
 
 @app.route("/purchasePlaces", methods=["POST"])
-def purchasePlaces():
-    competition = [c for c in competitions if c["name"] == request.form["competition"]][
-        0
-    ]
-    club = [c for c in clubs if c["name"] == request.form["club"]][0]
-    placesRequired = int(request.form["places"])
-    competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
-    flash("Great-booking complete!")
-    return render_template("welcome.html", club=club, competitions=competitions)
+def purchase_places():
+    competition = [competition for competition in competitions
+                   if competition["name"] == request.form["competition"]][0]
+    club = [club for club in clubs if club["name"] == request.form["club"]][0]
+    purchased_places = int(request.form["places"])
+
+    insufficient_places = 'Invalid request: please enter a number of places under competition capacity'
+    insufficient_points = 'Invalid request: please enter a number of places under club points'
+
+    if purchased_places > int(competition['places']) and purchased_places > int(club['points']):
+        return render_template("welcome.html", club=club, competitions=competitions,
+                               insufficient_places=insufficient_places,
+                               insufficient_points=insufficient_points), 403
+
+    elif int(competition['places']) < purchased_places <= int(club['points']):
+        return render_template("welcome.html", club=club, competitions=competitions,
+                               insufficient_places=insufficient_places), 403
+
+    elif int(competition['places']) >= purchased_places > int(club['points']):
+        return render_template("welcome.html", club=club, competitions=competitions,
+                               insufficient_points=insufficient_points), 403
+
+    else:
+        club['points'] = str(int(club['points']) - purchased_places)
+        competition['places'] = str(int(competition['places']) - purchased_places)
+        flash("Great-booking complete!")
+        return render_template("welcome.html", club=club, competitions=competitions)
 
 
 # TODO: Add route for points display

@@ -1,5 +1,5 @@
 from server import app, load_clubs, load_competitions
-from random import choice
+from random import choice, randrange
 
 import pytest
 
@@ -26,6 +26,20 @@ def competition():
     competition = choice(competitions)
     return {'name': competition['name'],
             'places': competition['places']}
+
+
+@pytest.fixture
+def places():
+    return randrange(1, 13)
+
+
+@pytest.fixture
+def affordable_places(club, competition):
+    club_points = int(club['points'])
+    competition_places = int(competition['places'])
+    max_affordable_places = min(club_points, competition_places)
+    return randrange(0, max_affordable_places + 1) \
+        if max_affordable_places + 1 > 0 else 0
 
 
 class AuthActions(object):
