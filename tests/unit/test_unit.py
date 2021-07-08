@@ -99,3 +99,21 @@ def test_cannot_purchase_more_than_club_points(auth, client, club, competition, 
                                                         places=str(int(club['points']) + places)))
     assert response.status_code == 403
     assert b"Invalid request: please enter a number of places under club points" in response.data
+
+
+def test_cannot_purchase_more_than_competition_capacity(auth, client, club, competition, places):
+    """
+    GIVEN an authenticated test client
+    WHEN a POST request is sent to '/purchasePlaces' page
+    with a number of places exceeding competition capacity
+    THEN check that:
+    1) A '403' status code is returned
+    2) The response includes the message:
+    'Invalid request: please enter a number of places under competition capacity'
+    """
+    auth.login(club)
+    response = client.post("/purchasePlaces", data=dict(club=club['name'],
+                                                        competition=competition['name'],
+                                                        places=str(int(competition['places']) + places)))
+    assert response.status_code == 403
+    assert b'Invalid request: please enter a number of places under competition capacity' in response.data
