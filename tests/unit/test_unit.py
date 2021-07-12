@@ -119,18 +119,40 @@ def test_cannot_purchase_more_than_competition_capacity(auth, client, club, comp
     assert b'Invalid request: please enter a number of places under competition capacity' in response.data
 
 
-def test_cannot_purchase_more_than_twelve_places(auth, client, club, competition, affordable_places):
+def test_cannot_purchase_more_than_twelve_places_in_a_row(auth, client, club, competition, affordable_places):
     """
     GIVEN an authenticated test client
     WHEN a POST request is sent to '/purchasePlaces' page to purchase more than 12 places
     THEN check that:
     1) A '403' status code is returned
     2) The response includes the message:
-    'Invalid request: maximum purchase limit of 12 places for a competition'
+    'Invalid request: maximum purchase limit of 12 places'
     """
     auth.login(club)
     response = client.post("/purchasePlaces", data=dict(club=club['name'],
                                                         competition=competition['name'],
-                                                        places=str(13+affordable_places)))
+                                                        places=str(13 + affordable_places)))
     assert response.status_code == 403
-    assert b'Invalid request: maximum purchase limit of 12 places for a competition' in response.data
+    assert b'Invalid request: maximum purchase limit of 12 places' in response.data
+
+
+def test_cannot_purchase_more_than_twelve_places_per_competition(auth, client, pair_club_competition, places):
+    """
+    GIVEN an authenticated test client
+    WHEN a POST request is sent to '/purchasePlaces' page
+    And more than 12 places have been bought for a competition
+    THEN check that:
+    1) A '403' status code is returned
+    2) The response includes the message:
+    'Invalid request: maximum purchase limit of 12 places per competition'
+    """
+    club = pair_club_competition['club']
+    competition = pair_club_competition['competition']
+    remaining_purchases = 12 - pair_club_competition['places_purchased']
+
+    auth.login(club)
+    response = client.post("/purchasePlaces", data=dict(club=club['name'],
+                                                        competition=competition['name'],
+                                                        places=remaining_purchases+places))
+    assert response.status_code == 403
+    assert b'Invalid request: maximum purchase limit of 12 places per competition' in response.data
