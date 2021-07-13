@@ -1,7 +1,7 @@
 import json
 
-from server import app, load_clubs, load_competitions,\
-    load_competition_places_purchased_by_club, load_purchases
+from server import app, load_clubs, load_competitions, load_purchases
+from server import load_competition_places_purchased_by_club, dump_data
 from random import choice, randrange
 
 import pytest
@@ -17,15 +17,9 @@ def client():
     with app.test_client() as client:
         yield client
 
-        with open('clubs.json', 'w') as clubs_file:
-            json.dump({'clubs': clubs}, clubs_file,
-                      indent=4, separators=(',', ': '))
-        with open('competitions.json', 'w') as competitions_file:
-            json.dump({'competitions': competitions}, competitions_file,
-                      indent=4, separators=(',', ': '))
-        with open('purchases.json', 'w') as purchases_file:
-            json.dump(purchases, purchases_file,
-                      indent=4, separators=(',', ': '))
+        dump_data('clubs.json', {'clubs': clubs})
+        dump_data('competitions.json', {'competitions': competitions})
+        dump_data('purchases.json', purchases)
 
 
 @pytest.fixture

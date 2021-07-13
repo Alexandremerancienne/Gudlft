@@ -29,6 +29,11 @@ def load_competition_places_purchased_by_club(club, competition):
         return competition_places_purchased_by_club
 
 
+def dump_data(file, data):
+    with open(file, 'w') as file:
+        json.dump(data, file, indent=4, separators=(',', ': '))
+
+
 app = Flask(__name__)
 app.secret_key = "something_special"
 
@@ -100,19 +105,13 @@ def purchase_places():
         clubs_list[club_index] = club
         competitions_list[competition_index] = competition
 
-        with open('clubs.json', 'w') as clubs_file:
-            json.dump({'clubs': clubs_list}, clubs_file)
-
-        with open('competitions.json', 'w') as competitions_file:
-            json.dump({'competitions': competitions_list}, competitions_file)
-
         with open("purchases.json", "r") as purchases_file:
             purchases_data = json.load(purchases_file)
-
         purchases_data[club['email']][competition['name']] += purchased_places
 
-        with open("purchases.json", "w") as purchases_file:
-            json.dump(purchases_data, purchases_file)
+        dump_data('clubs.json', {'clubs': clubs_list})
+        dump_data('competitions.json', {'competitions': competitions_list})
+        dump_data("purchases.json", purchases_data)
 
         return render_template("welcome.html", club=club, competitions=competitions)
 
