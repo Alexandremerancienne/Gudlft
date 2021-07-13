@@ -1,12 +1,15 @@
 import json
 
-from server import app, load_clubs, load_competitions, load_competition_places_purchased_by_club
+from server import app, load_clubs, load_competitions,\
+    load_competition_places_purchased_by_club, load_purchases
 from random import choice, randrange
 
 import pytest
 
 clubs = load_clubs()
 competitions = load_competitions()
+purchases = load_purchases()
+
 
 @pytest.fixture(scope='module')
 def client():
@@ -14,23 +17,19 @@ def client():
     with app.test_client() as client:
         yield client
 
-        with open('clubs.json') as clubs_file:
-            clubs_original_data = json.load(clubs_file)
-        with open('updated_clubs.json', 'w') as clubs_file:
-            json.dump(clubs_original_data, clubs_file)
-        with open('competitions.json') as competitions_file:
-            competitions_original_data = json.load(competitions_file)
-        with open('updated_competitions.json', 'w') as competitions_file:
-            json.dump(competitions_original_data, competitions_file)
-        with open('purchases.json') as purchases_file:
-            purchases_original_data = json.load(purchases_file)
-        with open('updated_purchases.json', 'w') as purchases_file:
-            json.dump(purchases_original_data, purchases_file)
+        with open('clubs.json', 'w') as clubs_file:
+            json.dump({'clubs': clubs}, clubs_file,
+                      indent=4, separators=(',', ': '))
+        with open('competitions.json', 'w') as competitions_file:
+            json.dump({'competitions': competitions}, competitions_file,
+                      indent=4, separators=(',', ': '))
+        with open('purchases.json', 'w') as purchases_file:
+            json.dump(purchases, purchases_file,
+                      indent=4, separators=(',', ': '))
 
 
 @pytest.fixture
 def club():
-    clubs = load_clubs()
     club = choice(clubs)
     return {'email': club['email'],
             'name': club['name'],
@@ -39,7 +38,6 @@ def club():
 
 @pytest.fixture
 def competition():
-    competitions = load_competitions()
     competition = choice(competitions)
     return {'name': competition['name'],
             'places': competition['places'],
@@ -66,7 +64,7 @@ def affordable_places(club, competition):
 
 @pytest.fixture
 def pair_club_competition(club, competition):
-    with open("updated_purchases.json", "r") as purchases_file:
+    with open("purchases.json", "r") as purchases_file:
         purchases_data = json.load(purchases_file)
         return {'club': club, 'competition': competition,
                 'places_purchased': purchases_data[club['email']][competition['name']]}
