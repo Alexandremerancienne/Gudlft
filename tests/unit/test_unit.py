@@ -156,3 +156,5 @@ def test_cannot_purchase_more_than_twelve_places_per_competition(auth, client, p
                                                         places=remaining_purchases+places))
     assert response.status_code == 403
     assert b'Invalid request: maximum purchase limit of 12 places per competition' in response.data
+
+

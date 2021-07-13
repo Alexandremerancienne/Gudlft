@@ -23,6 +23,12 @@ def load_competitions():
     return competitions_list
 
 
+def load_purchases():
+    with open("purchases.json") as purchases_file:
+        purchases_list = json.load(purchases_file)
+        return purchases_list
+
+
 def load_competition_places_purchased_by_club(club, competition):
     club_email = club['email']
     competition_name = competition['name']

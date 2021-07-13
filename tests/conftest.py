@@ -5,12 +5,27 @@ from random import choice, randrange
 
 import pytest
 
+clubs = load_clubs()
+competitions = load_competitions()
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def client():
     app.config['TESTING'] = True
     with app.test_client() as client:
         yield client
+
+        with open('clubs.json') as clubs_file:
+            clubs_original_data = json.load(clubs_file)
+        with open('updated_clubs.json', 'w') as clubs_file:
+            json.dump(clubs_original_data, clubs_file)
+        with open('competitions.json') as competitions_file:
+            competitions_original_data = json.load(competitions_file)
+        with open('updated_competitions.json', 'w') as competitions_file:
+            json.dump(competitions_original_data, competitions_file)
+        with open('purchases.json') as purchases_file:
+            purchases_original_data = json.load(purchases_file)
+        with open('updated_purchases.json', 'w') as purchases_file:
+            json.dump(purchases_original_data, purchases_file)
 
 
 @pytest.fixture
