@@ -72,6 +72,9 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchase_places():
+
+    print(competitions)
+    print(request.form['competition'])
     competition = [competition for competition in competitions
                    if competition["name"] == request.form["competition"]][0]
     competitions_list = load_competitions()

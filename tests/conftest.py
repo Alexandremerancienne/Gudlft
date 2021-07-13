@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from server import app, load_clubs, load_competitions, load_purchases
 from server import load_competition_places_purchased_by_club, dump_data
@@ -61,22 +61,9 @@ def future_competition():
                 'places': future_competition['places'],
                 'date': future_competition['date']}
     else:
-        future_competition = choice(future_competitions)
-        random_timedelta = randrange(158000000)
-        reservation_time = datetime.now()
-        future_time = (reservation_time + timedelta(seconds=random_timedelta)).replace(microsecond=0)
-        future_competition['date'] = future_time
-        with open('competitions.json', 'r') as competitions_file:
-            competitions_data = json.load(competitions_file)
-            competitions_list = competitions_data['competitions']
-            competition = [competition for competition in competitions_list
-                           if competition['name'] == future_competition['name']]
-            index = competitions_list.index(competition)
-            competitions_list[index] = future_competition
-        with open('competitions.json', 'w') as competitions_file:
-            json.dump({'competitions': competitions_list}, competitions_file)
-
-        return future_competition
+        return {'name': 'Future Competition',
+                'date': '2030-03-27 10:00:00',
+                'places': '20'}
 
 
 @pytest.fixture
@@ -85,10 +72,10 @@ def places():
 
 
 @pytest.fixture
-def affordable_places(club, competition):
+def affordable_places(club, future_competition):
     club_points = int(club['points'])
-    competition_places = int(competition['places'])
-    places_already_bought = load_competition_places_purchased_by_club(club, competition)
+    competition_places = int(future_competition['places'])
+    places_already_bought = load_competition_places_purchased_by_club(club, future_competition)
     if places_already_bought < 12:
         max_affordable_places = min(12, club_points, competition_places)
         return randrange(0, max_affordable_places + 1) \
@@ -98,11 +85,11 @@ def affordable_places(club, competition):
 
 
 @pytest.fixture
-def pair_club_competition(club, competition):
+def pair_club_competition(club, future_competition):
     with open("purchases.json", "r") as purchases_file:
         purchases_data = json.load(purchases_file)
-        return {'club': club, 'competition': competition,
-                'places_purchased': purchases_data[club['email']][competition['name']]}
+        return {'club': club, 'competition': future_competition,
+                'places_purchased': purchases_data[club['email']][future_competition['name']]}
 
 
 class AuthActions(object):

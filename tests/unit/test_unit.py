@@ -1,3 +1,15 @@
+import json
+
+from server import competitions
+
+with open("purchases.json", 'r') as purchases_file:
+    purchases_dict = json.load(purchases_file)
+with open("purchases.json", 'w') as purchases_file:
+    for value in purchases_dict.values():
+        value['Future Competition'] = 0
+    json.dump(purchases_dict, purchases_file)
+
+
 def test_welcome_page_loads(client):
     """
     GIVEN a test client
@@ -69,7 +81,7 @@ def test_select_a_competition_returns_competition_details(auth, client, club, co
     assert f"{int(competition['places'])}" in response.get_data(as_text=True)
 
 
-def test_purchase_reduces_club_points_and_competition_places(auth, client, club, competition, affordable_places):
+def test_purchase_reduces_club_points_and_competition_places(auth, client, club, future_competition, affordable_places):
     """
     GIVEN an authenticated test client
     WHEN a POST request is sent to '/purchasePlaces' page to purchase x places
@@ -77,13 +89,13 @@ def test_purchase_reduces_club_points_and_competition_places(auth, client, club,
     """
     auth.login(club)
     response = client.post("/purchasePlaces", data=dict(club=club['name'],
-                                                        competition=competition['name'],
+                                                        competition=future_competition['name'],
                                                         places=affordable_places))
     assert f"Points available: {str(int(club['points']) - affordable_places)}" in response.get_data(as_text=True)
-    assert f"Number of Places: {str(int(competition['places']) - affordable_places)}" in response.get_data(as_text=True)
+    assert f"Number of Places: {str(int(future_competition['places']) - affordable_places)}" in response.get_data(as_text=True)
 
 
-def test_cannot_purchase_more_than_club_points(auth, client, club, competition, places):
+def test_cannot_purchase_more_than_club_points(auth, client, club, future_competition, places):
     """
     GIVEN an authenticated test client
     WHEN a POST request is sent to '/purchasePlaces'
@@ -95,13 +107,13 @@ def test_cannot_purchase_more_than_club_points(auth, client, club, competition, 
     """
     auth.login(club)
     response = client.post("/purchasePlaces", data=dict(club=club['name'],
-                                                        competition=competition['name'],
+                                                        competition=future_competition['name'],
                                                         places=str(int(club['points']) + places)))
     assert response.status_code == 403
     assert b"Invalid request: please enter a number of places under club points" in response.data
 
 
-def test_cannot_purchase_more_than_competition_capacity(auth, client, club, competition, places):
+def test_cannot_purchase_more_than_competition_capacity(auth, client, club, future_competition, places):
     """
     GIVEN an authenticated test client
     WHEN a POST request is sent to '/purchasePlaces' page
@@ -113,13 +125,13 @@ def test_cannot_purchase_more_than_competition_capacity(auth, client, club, comp
     """
     auth.login(club)
     response = client.post("/purchasePlaces", data=dict(club=club['name'],
-                                                        competition=competition['name'],
-                                                        places=str(int(competition['places']) + places)))
+                                                        competition=future_competition['name'],
+                                                        places=str(int(future_competition['places']) + places)))
     assert response.status_code == 403
     assert b'Invalid request: please enter a number of places under competition capacity' in response.data
 
 
-def test_cannot_purchase_more_than_twelve_places_in_a_row(auth, client, club, competition, affordable_places):
+def test_cannot_purchase_more_than_twelve_places_in_a_row(auth, client, club, future_competition, affordable_places):
     """
     GIVEN an authenticated test client
     WHEN a POST request is sent to '/purchasePlaces' page to purchase more than 12 places
@@ -130,7 +142,7 @@ def test_cannot_purchase_more_than_twelve_places_in_a_row(auth, client, club, co
     """
     auth.login(club)
     response = client.post("/purchasePlaces", data=dict(club=club['name'],
-                                                        competition=competition['name'],
+                                                        competition=future_competition['name'],
                                                         places=str(13 + affordable_places)))
     assert response.status_code == 403
     assert b'Invalid request: maximum purchase limit of 12 places' in response.data
