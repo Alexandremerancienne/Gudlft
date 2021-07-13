@@ -73,11 +73,9 @@ def book(competition, club):
 @app.route("/purchasePlaces", methods=["POST"])
 def purchase_places():
 
-    print(competitions)
-    print(request.form['competition'])
-    competition = [competition for competition in competitions
-                   if competition["name"] == request.form["competition"]][0]
     competitions_list = load_competitions()
+    competition = [competition for competition in competitions_list
+                   if competition["name"] == request.form["competition"]][0]
     competition_index = competitions_list.index(competition)
 
     club = [club for club in clubs if club["name"] == request.form["club"]][0]
@@ -116,10 +114,10 @@ def purchase_places():
         dump_data('competitions.json', {'competitions': competitions_list})
         dump_data("purchases.json", purchases_data)
 
-        return render_template("welcome.html", club=club, competitions=competitions)
+        return render_template("welcome.html", club=club, competitions=competitions_list)
 
     else:
-        return render_template("welcome.html", club=club, competitions=competitions,
+        return render_template("welcome.html", club=club, competitions=competitions_list,
                                insufficient_places=insufficient_places,
                                insufficient_points=insufficient_points,
                                purchase_limit_overall=purchase_limit_overall,

@@ -1,6 +1,24 @@
 import json
 
-from server import competitions
+new_data = {
+    "competitions": [
+        {
+            "name": "Spring Festival",
+            "date": "2020-03-27 10:00:00",
+            "places": "25"
+        },
+        {
+            "name": "Fall Classic",
+            "date": "2020-10-22 13:30:00",
+            "places": "13"
+        },
+        {
+            "name": "Future Competition",
+            "date": "2030-03-27 10:00:00",
+            "places": "20"
+        }
+    ]
+}
 
 with open("purchases.json", 'r') as purchases_file:
     purchases_dict = json.load(purchases_file)
@@ -8,6 +26,13 @@ with open("purchases.json", 'w') as purchases_file:
     for value in purchases_dict.values():
         value['Future Competition'] = 0
     json.dump(purchases_dict, purchases_file)
+
+future_competition = {'name': 'Future Competition',
+                      'date': '2030-03-27 10:00:00',
+                      'places': '20'}
+
+with open("competitions.json", 'w') as competitions_file:
+    json.dump(new_data, competitions_file)
 
 
 def test_welcome_page_loads(client):
