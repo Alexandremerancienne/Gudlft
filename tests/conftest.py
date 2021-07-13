@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timedelta
 
 from server import app, load_clubs, load_competitions, load_purchases
 from server import load_competition_places_purchased_by_club, dump_data
@@ -36,6 +37,46 @@ def competition():
     return {'name': competition['name'],
             'places': competition['places'],
             'date': competition['date']}
+
+
+@pytest.fixture
+def future_competition():
+
+    def reservation_date():
+        time = datetime.now()
+        string = time.strftime('%Y-%m-%d %H:%M:%S')
+        date = (datetime.strptime(string, '%Y-%m-%d %H:%M:%S'))
+        return date
+
+    def competition_date(competition):
+        return datetime.strptime(competition['date'], '%Y-%m-%d %H:%M:%S')
+
+    reservation = reservation_date()
+    future_competitions = [competition for competition in competitions
+                           if competition_date(competition) > reservation]
+
+    if len(future_competitions) != 0:
+        future_competition = choice(future_competitions)
+        return {'name': future_competition['name'],
+                'places': future_competition['places'],
+                'date': future_competition['date']}
+    else:
+        future_competition = choice(future_competitions)
+        random_timedelta = randrange(158000000)
+        reservation_time = datetime.now()
+        future_time = (reservation_time + timedelta(seconds=random_timedelta)).replace(microsecond=0)
+        future_competition['date'] = future_time
+        with open('competitions.json', 'r') as competitions_file:
+            competitions_data = json.load(competitions_file)
+            competitions_list = competitions_data['competitions']
+            competition = [competition for competition in competitions_list
+                           if competition['name'] == future_competition['name']]
+            index = competitions_list.index(competition)
+            competitions_list[index] = future_competition
+        with open('competitions.json', 'w') as competitions_file:
+            json.dump({'competitions': competitions_list}, competitions_file)
+
+        return future_competition
 
 
 @pytest.fixture
