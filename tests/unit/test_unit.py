@@ -1,25 +1,5 @@
 import json
 
-new_data = {
-    "competitions": [
-        {
-            "name": "Spring Festival",
-            "date": "2020-03-27 10:00:00",
-            "places": "25"
-        },
-        {
-            "name": "Fall Classic",
-            "date": "2020-10-22 13:30:00",
-            "places": "13"
-        },
-        {
-            "name": "Future Competition",
-            "date": "2030-03-27 10:00:00",
-            "places": "20"
-        }
-    ]
-}
-
 with open("purchases.json", 'r') as purchases_file:
     purchases_dict = json.load(purchases_file)
 with open("purchases.json", 'w') as purchases_file:
@@ -31,8 +11,12 @@ future_competition = {'name': 'Future Competition',
                       'date': '2030-03-27 10:00:00',
                       'places': '20'}
 
+with open("competitions.json", 'r') as competitions_file:
+    competitions_data = json.load(competitions_file)
+    competitions_list = competitions_data['competitions']
+    competitions_list.append(future_competition)
 with open("competitions.json", 'w') as competitions_file:
-    json.dump(new_data, competitions_file)
+    json.dump({"competitions": competitions_list}, competitions_file)
 
 
 def test_welcome_page_loads(client):
