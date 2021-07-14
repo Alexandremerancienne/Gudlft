@@ -62,20 +62,12 @@ def future_competition():
         for competition in reload_competitions
         if competition_date(competition) >= reservation
     ]
-
-    if len(future_competitions) != 0:
-        future_competition = choice(future_competitions)
-        return {
-            "name": future_competition["name"],
-            "places": future_competition["places"],
-            "date": future_competition["date"],
-        }
-    else:
-        return {
-            "name": "Future Competition",
-            "date": "2030-03-27 10:00:00",
-            "places": "20",
-        }
+    future_competition = choice(future_competitions)
+    return {
+        "name": future_competition["name"],
+        "places": future_competition["places"],
+        "date": future_competition["date"],
+    }
 
 
 @pytest.fixture
@@ -102,17 +94,14 @@ def affordable_places(club, future_competition):
         club, future_competition
     )
     print(places_already_bought)
-    if places_already_bought < 12:
-        max_affordable_places = min(
-            12 - places_already_bought, club_points, competition_places
-        )
-        return (
-            randrange(0, max_affordable_places + 1)
-            if max_affordable_places + 1 > 0
-            else 0
-        )
-    else:
-        return 0
+    max_affordable_places = min(
+        12 - places_already_bought, club_points, competition_places
+    )
+    return (
+        randrange(0, max_affordable_places + 1)
+        if max_affordable_places + 1 > 0
+        else 0
+    )
 
 
 @pytest.fixture
@@ -136,7 +125,7 @@ class AuthActions(object):
         return self.client.post("/showSummary", data=dict(email=club["email"]))
 
     def logout(self):
-        return self._client.get("/logout")
+        return self.client.get("/logout")
 
 
 @pytest.fixture

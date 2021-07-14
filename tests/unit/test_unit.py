@@ -65,13 +65,13 @@ def test_login_for_unregistered_user_returns_error(client, club):
     assert b"Unknown user: please enter a valid email" in response.data
 
 
-def test_logout_works(client):
+def test_logout_works(auth):
     """
     GIVEN a test client
     WHEN a POST request is sent to '/logout' page
     THEN check that headers will have 'localhost' as Location header
     """
-    response = client.get("/logout")
+    response = auth.logout()
     assert response.status_code == 302
     assert "http://localhost/" == response.headers["Location"]
 
