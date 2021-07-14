@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+
 from flask import Flask, render_template, request, redirect, flash, url_for
 
 
@@ -46,28 +48,34 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/showSummary',methods=['POST'])
+@app.route('/showSummary', methods=['POST'])
 def show_summary():
+    competitions_list = load_competitions()
     club = [club for club in clubs if club['email'] == request.form['email']]
     if len(club) == 0:
         invalid_email = "Unknown user: please enter a valid email"
         return render_template('index.html', invalid_email=invalid_email), 403
     else:
         club = club[0]
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html',
+                               club=club,
+                               competitions=competitions_list)
 
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
-    foundClub = [c for c in clubs if c["name"] == club][0]
-    foundCompetition = [c for c in competitions if c["name"] == competition][0]
-    if foundClub and foundCompetition:
-        return render_template(
-            "booking.html", club=foundClub, competition=foundCompetition
-        )
+    url_club = [elt for elt in clubs if elt["name"] == club][0]
+    url_competition = [elt for elt in competitions
+                       if elt["name"] == competition][0]
+    if url_club and url_competition:
+        return render_template("booking.html",
+                               club=url_club,
+                               competition=url_competition)
     else:
         flash("Something went wrong-please try again")
-        return render_template("welcome.html", club=club, competitions=competitions)
+        return render_template("welcome.html",
+                               club=club,
+                               competitions=competitions)
 
 
 @app.route("/purchasePlaces", methods=["POST"])
@@ -82,46 +90,73 @@ def purchase_places():
     clubs_list = load_clubs()
     club_index = clubs_list.index(club)
 
-    places_already_bought = load_competition_places_purchased_by_club(club, competition)
+    places_already_bought = \
+        load_competition_places_purchased_by_club(club, competition)
     purchased_places = int(request.form["places"])
 
-    insufficient_places = 'Invalid request: please enter a number of places under competition capacity'\
+    reservation = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    reservation_date = (datetime.strptime(reservation,
+                                          '%Y-%m-%d %H:%M:%S'))
+    competition_date = datetime.strptime(competition['date'],
+                                         '%Y-%m-%d %H:%M:%S')
+
+    insufficient_places = 'Invalid request: please enter a number of places' \
+                          ' under competition capacity'\
         if purchased_places > int(competition['places']) else ''
 
-    insufficient_points = 'Invalid request: please enter a number of places under club points'\
+    insufficient_points = 'Invalid request: please enter a number of places ' \
+                          'under club points'\
         if purchased_places > int(club['points']) else ''
 
-    purchase_limit_overall = 'Invalid request: maximum purchase limit of 12 places' \
+    limit_overall = 'Invalid request: maximum purchase limit of 12 places' \
         if purchased_places > 12 else ''
 
-    purchase_limit_per_competition = 'Invalid request: maximum purchase limit of 12 places per competition'\
+    competition_limit = 'Invalid request: maximum purchase limit of' \
+                        ' 12 places per competition'\
         if places_already_bought + purchased_places > 12 else ''
 
-    if purchased_places <= int(competition['places']) and purchased_places <= int(club['points'])\
-            and purchased_places <= 12 and places_already_bought + purchased_places <= 12:
-        club['points'] = str(int(club['points']) - purchased_places)
-        competition['places'] = str(int(competition['places']) - purchased_places)
-        flash("Great-booking complete!")
+    competition_over = 'Invalid request: this competition is over!' \
+        if competition_date < reservation_date else ''
 
-        clubs_list[club_index] = club
-        competitions_list[competition_index] = competition
-
-        with open("purchases.json", "r") as purchases_file:
-            purchases_data = json.load(purchases_file)
-        purchases_data[club['email']][competition['name']] += purchased_places
-
-        dump_data('clubs.json', {'clubs': clubs_list})
-        dump_data('competitions.json', {'competitions': competitions_list})
-        dump_data("purchases.json", purchases_data)
-
-        return render_template("welcome.html", club=club, competitions=competitions_list)
-
+    if competition_date < reservation_date:
+        return render_template("welcome.html",
+                               club=club,
+                               competitions=competitions_list,
+                               competition_over=competition_over), 403
     else:
-        return render_template("welcome.html", club=club, competitions=competitions_list,
-                               insufficient_places=insufficient_places,
-                               insufficient_points=insufficient_points,
-                               purchase_limit_overall=purchase_limit_overall,
-                               purchase_limit_per_competition=purchase_limit_per_competition), 403
+        if purchased_places <= int(competition['places'])\
+                and purchased_places <= int(club['points'])\
+                and purchased_places <= 12\
+                and places_already_bought + purchased_places <= 12:
+            club['points'] = str(int(club['points']) - purchased_places)
+            competition['places'] = \
+                str(int(competition['places']) - purchased_places)
+            flash("Great-booking complete!")
+
+            clubs_list[club_index] = club
+            competitions_list[competition_index] = competition
+
+            with open("purchases.json", "r") as purchases_file:
+                purchases_data = json.load(purchases_file)
+            purchases_data[club['email']][competition['name']] \
+                += purchased_places
+
+            dump_data('clubs.json', {'clubs': clubs_list})
+            dump_data('competitions.json', {'competitions': competitions_list})
+            dump_data("purchases.json", purchases_data)
+
+            return render_template("welcome.html",
+                                   club=club,
+                                   competitions=competitions_list)
+
+        else:
+            return render_template("welcome.html",
+                                   club=club,
+                                   competitions=competitions_list,
+                                   insufficient_places=insufficient_places,
+                                   insufficient_points=insufficient_points,
+                                   limit_overall=limit_overall,
+                                   competition_limit=competition_limit), 403
 
 # TODO: Add route for points display
 
