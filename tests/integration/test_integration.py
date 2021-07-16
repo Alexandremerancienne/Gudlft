@@ -42,7 +42,6 @@ class IntegrationTest(unittest.TestCase):
     def setUp(cls):
         cls.driver = webdriver.Chrome(executable_path="drivers/chromedriver.exe")
         cls.driver.implicitly_wait(10)
-        cls.driver.implicitly_wait(100)
 
         cls.club = choice(clubs)
 
