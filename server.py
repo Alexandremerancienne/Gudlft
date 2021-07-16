@@ -64,8 +64,9 @@ def show_summary():
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
+    competitions_list = load_competitions()
     url_club = [elt for elt in clubs if elt["name"] == club][0]
-    url_competition = [elt for elt in competitions
+    url_competition = [elt for elt in competitions_list
                        if elt["name"] == competition][0]
     if url_club and url_competition:
         return render_template("booking.html",
@@ -86,8 +87,8 @@ def purchase_places():
                    if competition["name"] == request.form["competition"]][0]
     competition_index = competitions_list.index(competition)
 
-    club = [club for club in clubs if club["name"] == request.form["club"]][0]
     clubs_list = load_clubs()
+    club = [club for club in clubs_list if club["name"] == request.form["club"]][0]
     club_index = clubs_list.index(club)
 
     places_already_bought = \
