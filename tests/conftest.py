@@ -26,15 +26,13 @@ def competition_date(competition):
 @pytest.fixture(scope="module")
 def client():
     app.config["TESTING"] = True
-    with app.test_client() as client:
-        yield client
-
-        dump_data("clubs.json", {"clubs": clubs})
-        dump_data("competitions.json", {"competitions": competitions})
-        dump_data("purchases.json", purchases)
+    yield app.test_client()
+    dump_data("clubs.json", {"clubs": clubs})
+    dump_data("competitions.json", {"competitions": competitions})
+    dump_data("purchases.json", purchases)
 
 
-@pytest.fixture
+@pytest.fixture()
 def club():
     reload_clubs = load_clubs()
     club = choice(reload_clubs)
