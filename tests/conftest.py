@@ -24,6 +24,12 @@ def competition_date(competition):
 
 
 def load_future_competition():
+    future_competition = {
+        "name": "Future Competition",
+        "date": "2030-03-27 10:00:00",
+        "places": "20",
+    }
+
     with open("purchases.json", "r") as purchases_file:
         purchases_dict = json.load(purchases_file)
     with open("purchases.json", "w") as purchases_file:
@@ -31,18 +37,14 @@ def load_future_competition():
             value["Future Competition"] = 0
         json.dump(purchases_dict, purchases_file)
 
-    future_competition = {
-        "name": "Future Competition",
-        "date": "2030-03-27 10:00:00",
-        "places": "20",
-    }
-
     with open("competitions.json", "r") as competitions_file:
         competitions_data = json.load(competitions_file)
         competitions_list = competitions_data["competitions"]
         competitions_list.append(future_competition)
     with open("competitions.json", "w") as competitions_file:
         json.dump({"competitions": competitions_list}, competitions_file)
+
+    return future_competition
 
 
 @pytest.fixture(scope="module")
@@ -90,12 +92,8 @@ def future_competition():
             "date": future_competition["date"],
         }
     else:
-        load_future_competition()
-        return {
-            "name": "Future Competition",
-            "date": "2030-03-27 10:00:00",
-            "places": "20",
-        }
+        future_competition = load_future_competition()
+        return future_competition
 
 
 @pytest.fixture
@@ -112,6 +110,11 @@ def past_competition():
 @pytest.fixture
 def places():
     return randrange(1, 13)
+
+
+@pytest.fixture
+def negative_places():
+    return randrange(-1000, -1)
 
 
 @pytest.fixture

@@ -101,6 +101,9 @@ def purchase_places():
     competition_date = datetime.strptime(competition['date'],
                                          '%Y-%m-%d %H:%M:%S')
 
+    negative_places = 'Invalid request: please enter a positive number of places'\
+        if purchased_places < 0 else ''
+
     insufficient_places = 'Invalid request: please enter a number of places' \
                           ' under competition capacity'\
         if purchased_places > int(competition['places']) else ''
@@ -127,7 +130,7 @@ def purchase_places():
     else:
         if purchased_places <= int(competition['places'])\
                 and purchased_places <= int(club['points'])\
-                and purchased_places <= 12\
+                and 0 <= purchased_places <= 12\
                 and places_already_bought + purchased_places <= 12:
             club['points'] = str(int(club['points']) - purchased_places)
             competition['places'] = \
@@ -154,6 +157,7 @@ def purchase_places():
             return render_template("welcome.html",
                                    club=club,
                                    competitions=competitions_list,
+                                   negative_places=negative_places,
                                    insufficient_places=insufficient_places,
                                    insufficient_points=insufficient_points,
                                    limit_overall=limit_overall,

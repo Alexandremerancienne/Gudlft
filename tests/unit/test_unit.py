@@ -104,6 +104,34 @@ def test_purchase_reduces_club_points_and_competition_places(
     )
 
 
+def test_cannot_purchase_negative_places(
+        auth, client, club, future_competition, negative_places
+):
+    """
+    GIVEN an authenticated test client
+    WHEN a POST request is sent to '/purchasePlaces'
+    with a negative number of places
+    THEN check that:
+    1) A '403' status code is returned
+    2) The response includes the message:
+    'Invalid request: please enter a positive number of places'
+    """
+    auth.login(club)
+    response = client.post(
+        "/purchase_places",
+        data=dict(
+            club=club["name"],
+            competition=future_competition["name"],
+            places=str(int(club["points"]) + negative_places),
+        ),
+    )
+    assert response.status_code == 403
+    assert (
+            b"Invalid request: please enter a positive number of places"
+            in response.data
+    )
+
+
 def test_cannot_purchase_more_than_club_points(
     auth, client, club, future_competition, places
 ):
