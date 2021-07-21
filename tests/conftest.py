@@ -23,6 +23,28 @@ def competition_date(competition):
     return datetime.strptime(competition["date"], "%Y-%m-%d %H:%M:%S")
 
 
+def load_future_competition():
+    with open("purchases.json", "r") as purchases_file:
+        purchases_dict = json.load(purchases_file)
+    with open("purchases.json", "w") as purchases_file:
+        for value in purchases_dict.values():
+            value["Future Competition"] = 0
+        json.dump(purchases_dict, purchases_file)
+
+    future_competition = {
+        "name": "Future Competition",
+        "date": "2030-03-27 10:00:00",
+        "places": "20",
+    }
+
+    with open("competitions.json", "r") as competitions_file:
+        competitions_data = json.load(competitions_file)
+        competitions_list = competitions_data["competitions"]
+        competitions_list.append(future_competition)
+    with open("competitions.json", "w") as competitions_file:
+        json.dump({"competitions": competitions_list}, competitions_file)
+
+
 @pytest.fixture(scope="module")
 def client():
     app.config["TESTING"] = True
@@ -60,12 +82,20 @@ def future_competition():
         for competition in reload_competitions
         if competition_date(competition) >= reservation
     ]
-    future_competition = choice(future_competitions)
-    return {
-        "name": future_competition["name"],
-        "places": future_competition["places"],
-        "date": future_competition["date"],
-    }
+    if len(future_competitions) != 0:
+        future_competition = choice(future_competitions)
+        return {
+            "name": future_competition["name"],
+            "places": future_competition["places"],
+            "date": future_competition["date"],
+        }
+    else:
+        load_future_competition()
+        return {
+            "name": "Future Competition",
+            "date": "2030-03-27 10:00:00",
+            "places": "20",
+        }
 
 
 @pytest.fixture
