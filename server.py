@@ -48,7 +48,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/showSummary', methods=['POST'])
+@app.route('/show_summary', methods=['POST'])
 def show_summary():
     competitions_list = load_competitions()
     club = [club for club in clubs if club['email'] == request.form['email']]
@@ -79,7 +79,7 @@ def book(competition, club):
                                competitions=competitions)
 
 
-@app.route("/purchasePlaces", methods=["POST"])
+@app.route("/purchase_places", methods=["POST"])
 def purchase_places():
 
     competitions_list = load_competitions()
@@ -159,7 +159,11 @@ def purchase_places():
                                    limit_overall=limit_overall,
                                    competition_limit=competition_limit), 403
 
-# TODO: Add route for points display
+
+@app.route("/points_board")
+def display_points():
+    clubs_list = load_clubs()
+    return render_template("board.html", clubs=clubs_list)
 
 
 @app.route("/logout")

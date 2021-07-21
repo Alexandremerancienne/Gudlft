@@ -45,7 +45,7 @@ def test_login_for_registered_user_returns_success(client, club):
     2) The response includes the message:
     'Welcome, <email>'
     """
-    response = client.post("/showSummary", data=dict(email=club["email"]))
+    response = client.post("/show_summary", data=dict(email=club["email"]))
     assert response.status_code == 200
     assert f"Welcome, {club['email']}" in response.get_data(as_text=True)
 
@@ -60,7 +60,7 @@ def test_login_for_unregistered_user_returns_error(client, club):
     'Unknown user: please enter a valid mail'
     """
     club["email"] = "unknown-user@bot.com"
-    response = client.post("/showSummary", data=dict(email=club["email"]))
+    response = client.post("/show_summary", data=dict(email=club["email"]))
     assert response.status_code == 403
     assert b"Unknown user: please enter a valid email" in response.data
 
@@ -104,7 +104,7 @@ def test_purchase_reduces_club_points_and_competition_places(
     """
     auth.login(club)
     response = client.post(
-        "/purchasePlaces",
+        "/purchase_places",
         data=dict(
             club=club["name"],
             competition=future_competition["name"],
@@ -136,7 +136,7 @@ def test_cannot_purchase_more_than_club_points(
     """
     auth.login(club)
     response = client.post(
-        "/purchasePlaces",
+        "/purchase_places",
         data=dict(
             club=club["name"],
             competition=future_competition["name"],
@@ -165,7 +165,7 @@ def test_cannot_purchase_more_than_competition_capacity(
     """
     auth.login(club)
     response = client.post(
-        "/purchasePlaces",
+        "/purchase_places",
         data=dict(
             club=club["name"],
             competition=future_competition["name"],
@@ -194,7 +194,7 @@ def test_cannot_purchase_more_than_twelve_places_in_a_row(
     """
     auth.login(club)
     response = client.post(
-        "/purchasePlaces",
+        "/purchase_places",
         data=dict(
             club=club["name"],
             competition=future_competition["name"],
@@ -224,7 +224,7 @@ def test_cannot_purchase_more_than_twelve_places_per_competition(
 
     auth.login(club)
     response = client.post(
-        "/purchasePlaces",
+        "/purchase_places",
         data=dict(
             club=club["name"],
             competition=competition["name"],
@@ -249,7 +249,7 @@ def test_can_purchase_for_future_competition(
     """
     auth.login(club)
     response = client.post(
-        "/purchasePlaces",
+        "/purchase_places",
         data=dict(
             club=club["name"],
             competition=future_competition["name"],
@@ -259,7 +259,7 @@ def test_can_purchase_for_future_competition(
     assert response.status_code == 200
 
 
-def test_can_purchase_for_past_competition(
+def test_cannot_purchase_for_past_competition(
     auth, client, club, past_competition, places
 ):
     """
@@ -270,7 +270,7 @@ def test_can_purchase_for_past_competition(
     """
     auth.login(club)
     response = client.post(
-        "/purchasePlaces",
+        "/purchase_places",
         data=dict(
             club=club["name"],
             competition=past_competition["name"],
