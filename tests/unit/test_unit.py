@@ -122,7 +122,7 @@ def test_cannot_purchase_negative_places(
         data=dict(
             club=club["name"],
             competition=future_competition["name"],
-            places=str(int(club["points"]) + negative_places),
+            places=str(negative_places),
         ),
     )
     assert response.status_code == 403
