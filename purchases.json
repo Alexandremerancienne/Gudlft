@@ -1,1 +1,14 @@
-{"john@simplylift.co": {"Spring Festival": 0, "Fall Classic": 0, "Future Competition": 0}, "admin@irontemple.com": {"Spring Festival": 0, "Fall Classic": 0, "Future Competition": 0}, "kate@shelifts.co.uk": {"Spring Festival": 0, "Fall Classic": 0, "Future Competition": 0}}
+{
+    "john@simplylift.co": {
+        "Spring Festival": 0,
+        "Fall Classic": 0
+    },
+    "admin@irontemple.com": {
+        "Spring Festival": 0,
+        "Fall Classic": 0
+    },
+    "kate@shelifts.co.uk": {
+        "Spring Festival": 0,
+        "Fall Classic": 0
+    }
+}
