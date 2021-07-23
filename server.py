@@ -88,7 +88,8 @@ def purchase_places():
     competition_index = competitions_list.index(competition)
 
     clubs_list = load_clubs()
-    club = [club for club in clubs_list if club["name"] == request.form["club"]][0]
+    club = [club for club in clubs_list
+            if club["name"] == request.form["club"]][0]
     club_index = clubs_list.index(club)
 
     places_already_bought = \
@@ -101,7 +102,8 @@ def purchase_places():
     competition_date = datetime.strptime(competition['date'],
                                          '%Y-%m-%d %H:%M:%S')
 
-    negative_places = 'Invalid request: please enter a positive number of places'\
+    negative_places = 'Invalid request: ' \
+                      'please enter a positive number of places'\
         if purchased_places < 0 else ''
 
     insufficient_places = 'Invalid request: please enter a number of places' \

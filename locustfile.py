@@ -31,13 +31,15 @@ class WebsiteUser(HttpUser):
 
     @task
     def book(self):
-        self.client.get("/book/" + self.competition['name'] + "/" + self.club['name'])
+        self.client.get("/book/" + self.competition['name']
+                        + "/" + self.club['name'])
 
     @task
     def purchase(self):
-        self.client.post("/purchase_places", {"club": self.club['name'],
-                                              "competition": self.competition['name'],
-                                              "places": '0'})
+        self.client.post("/purchase_places",
+                         {"club": self.club['name'],
+                          "competition": self.competition['name'],
+                          "places": '0'})
 
     def on_stop(self):
         self.client.get("/logout")

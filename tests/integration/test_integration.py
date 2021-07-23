@@ -40,7 +40,8 @@ class IntegrationTest(unittest.TestCase):
 
     @classmethod
     def setUp(cls):
-        cls.driver = webdriver.Chrome(executable_path="drivers/chromedriver.exe")
+        path = "drivers/chromedriver.exe"
+        cls.driver = webdriver.Chrome(executable_path=path)
         cls.driver.implicitly_wait(10)
 
         cls.club = choice(clubs)
@@ -48,22 +49,27 @@ class IntegrationTest(unittest.TestCase):
         reload_competitions = load_competitions()
         cls.competition = reload_competitions[2]
 
-        max_affordable_places = min(12, int(cls.club['points']), int(cls.competition['places']))
+        max_affordable_places = min(12, int(cls.club['points']),
+                                    int(cls.competition['places']))
         cls.affordable_places = randrange(0, max_affordable_places + 1) \
             if max_affordable_places + 1 > 0 else 0
 
     def test_login_and_purchase_places(self):
-        self.driver = webdriver.Chrome(executable_path="drivers/chromedriver.exe")
+        self.driver = \
+            webdriver.Chrome(executable_path="drivers/chromedriver.exe")
 
         # 1) A GET request is sent to 'http://127.0.0.1:5000/' page
 
         self.driver.get("http://127.0.0.1:5000/")
         welcome_title = self.driver.find_element_by_tag_name("h1").text
-        self.assertEqual(welcome_title, 'Welcome to the GUDLFT Registration Portal!')
+        self.assertEqual(welcome_title,
+                         'Welcome to the GUDLFT Registration Portal!')
 
-        # 2) A POST request is sent to '/showSummary' page with a registered email
+        # 2) A POST request is sent to '/showSummary' page
+        # with a registered email
 
-        self.driver.find_element_by_tag_name("input").send_keys(self.club['email'])
+        input_tag = self.driver.find_element_by_tag_name("input")
+        input_tag.send_keys(self.club['email'])
         self.driver.find_element_by_tag_name("button").click()
         show_summary_title = self.driver.find_element_by_tag_name('h2').text
         self.assertEqual(show_summary_title, 'Welcome, ' + self.club['email'])
@@ -83,9 +89,12 @@ class IntegrationTest(unittest.TestCase):
 
         text = self.driver.find_element_by_tag_name("h2").text
         self.assertEqual(text, 'Welcome, ' + self.club['email'])
-        self.assertTrue('Points available: ' + str(int(self.club['points']) - self.affordable_places)
+        self.assertTrue('Points available: ' +
+                        str(int(self.club['points']) - self.affordable_places)
                         in self.driver.page_source)
-        self.assertTrue('Number of Places: ' + str(int(self.competition['places']) - self.affordable_places)
+        self.assertTrue('Number of Places: ' +
+                        str(int(self.competition['places'])
+                            - self.affordable_places)
                         in self.driver.page_source)
 
     def tearDown(self):
