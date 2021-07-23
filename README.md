@@ -21,6 +21,14 @@
         This ensures you'll be able to install the correct packages without interfering with Python on your machine.
 
         Before you begin, please ensure you have this installed globally. 
+     
+     * [Selenium](https://www.selenium.dev/documentation/en/)
+     
+        Selenium allows the automation of web browsers. It is used for our integration test.
+     
+     * [Google Chrome](https://www.google.com/intl/fr/chrome/)
+     
+        The Selenium web driver set up for our integration test uses Chrome as search engine.  
 
 
 3. Installation
