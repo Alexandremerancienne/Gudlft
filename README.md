@@ -42,6 +42,8 @@
     - Flask requires that you set an environmental variable to the python file. However you do that, you'll want to set the file to be <code>server.py</code>. Check [here](https://flask.palletsprojects.com/en/1.1.x/quickstart/#a-minimal-application) for more details
 
     - You should now be ready to test the application. In the directory, type either <code>flask run</code> or <code>python -m flask run</code>. The app should respond with an address you should be able to go to using your browser.
+    
+    - As Selenium is used for the integration test, two terminals should be used when testing the application: the first one to launch Flask (see previous point), the second one to launch the tests (we use Pytest).    
 
 4. Current Setup
 
@@ -49,11 +51,10 @@
      
     * competitions.json - list of competitions
     * clubs.json - list of clubs with relevant information. You can look here to see what email addresses the app will accept for login.
+    * purchases.json - number of places purchased by each club for each competition.
 
 5. Testing
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
-
-    We also like to show how well we're testing, so there's a module called 
-    [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
+    We also like to show how well we're testing, so we have added to our project a module called 
+    [coverage](https://coverage.readthedocs.io/en/coverage-5.1/).
 
