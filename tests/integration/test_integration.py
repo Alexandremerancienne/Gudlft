@@ -85,7 +85,6 @@ class IntegrationTest(unittest.TestCase):
 
         self.driver.find_element_by_id("").send_keys(self.affordable_places)
         self.driver.find_element_by_tag_name("button").click()
-        print(self.driver.page_source)
 
         text = self.driver.find_element_by_tag_name("h2").text
         self.assertEqual(text, 'Welcome, ' + self.club['email'])
