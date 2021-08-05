@@ -12,10 +12,10 @@ competitions = load_competitions()
 purchases = load_purchases()
 
 
-class IntegrationTest(unittest.TestCase):
+class FunctionalTest(unittest.TestCase):
 
     """
-    Sequence covered by IntegrationTest:
+    Sequence covered by FunctionalTest:
 
     Setup : Selenium web driver using Chrome as search engine
 
