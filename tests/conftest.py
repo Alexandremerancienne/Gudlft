@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from math import floor
 
 from server import app, load_clubs, load_competitions, load_purchases
 from server import load_competition_places_purchased_by_club, dump_data
@@ -124,9 +125,8 @@ def affordable_places(club, future_competition):
     places_already_bought = load_competition_places_purchased_by_club(
         club, future_competition
     )
-    print(places_already_bought)
     max_affordable_places = min(
-        12 - places_already_bought, club_points, competition_places
+        12 - places_already_bought, floor(club_points/3), competition_places
     )
     return (
         randrange(0, max_affordable_places + 1)

@@ -1,4 +1,5 @@
 import unittest
+from math import floor
 
 from server import load_clubs, load_competitions
 from server import load_purchases, dump_data
@@ -49,7 +50,7 @@ class FunctionalTest(unittest.TestCase):
         reload_competitions = load_competitions()
         cls.competition = reload_competitions[2]
 
-        max_affordable_places = min(12, int(cls.club['points']),
+        max_affordable_places = min(12, floor(int(cls.club['points'])/3),
                                     int(cls.competition['places']))
         cls.affordable_places = randrange(0, max_affordable_places + 1) \
             if max_affordable_places + 1 > 0 else 0
@@ -89,7 +90,7 @@ class FunctionalTest(unittest.TestCase):
         text = self.driver.find_element_by_tag_name("h2").text
         self.assertEqual(text, 'Welcome, ' + self.club['email'])
         self.assertTrue('Points available: ' +
-                        str(int(self.club['points']) - self.affordable_places)
+                        str(int(self.club['points']) - 3*self.affordable_places)
                         in self.driver.page_source)
         self.assertTrue('Number of Places: ' +
                         str(int(self.competition['places'])

@@ -94,7 +94,7 @@ def test_purchase_reduces_club_points_and_competition_places(
         ),
     )
     assert (
-        f"Points available: {str(int(club['points']) - affordable_places)}"
+        f"Points available: {str(int(club['points']) - 3*affordable_places)}"
         in response.get_data(as_text=True)
     )
     assert (

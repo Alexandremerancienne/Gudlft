@@ -112,7 +112,7 @@ def purchase_places():
 
     insufficient_points = 'Invalid request: please enter a number of places ' \
                           'under club points'\
-        if purchased_places > int(club['points']) else ''
+        if 3*purchased_places > int(club['points']) else ''
 
     limit_overall = 'Invalid request: maximum purchase limit of 12 places' \
         if purchased_places > 12 else ''
@@ -131,10 +131,10 @@ def purchase_places():
                                competition_over=competition_over), 403
     else:
         if purchased_places <= int(competition['places'])\
-                and purchased_places <= int(club['points'])\
+                and 3*purchased_places <= int(club['points'])\
                 and 0 <= purchased_places <= 12\
                 and places_already_bought + purchased_places <= 12:
-            club['points'] = str(int(club['points']) - purchased_places)
+            club['points'] = str(int(club['points']) - 3*purchased_places)
             competition['places'] = \
                 str(int(competition['places']) - purchased_places)
             flash("Great-booking complete!")
