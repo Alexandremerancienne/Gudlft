@@ -1,8 +1,3 @@
-from ..conftest import load_future_competition
-
-load_future_competition()
-
-
 def test_logout_then_login(auth, client):
     """
     GIVEN a test client
@@ -21,7 +16,7 @@ def test_logout_then_login(auth, client):
     assert b"Welcome to the GUDLFT Registration Portal!" in response.data
 
 
-def test_login_then_view_points_board(auth, club, client):
+def test_login_then_access_points_board(auth, club, client):
     """
     GIVEN a test client
     WHEN:
@@ -42,7 +37,7 @@ def test_login_then_view_points_board(auth, club, client):
     assert b"GUDLFT Website" in response.data
 
 
-def test_view_points_board_then_login(client):
+def test_access_points_board_then_login(client):
     """
     GIVEN a test client
     WHEN:

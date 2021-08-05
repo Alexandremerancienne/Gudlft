@@ -288,3 +288,21 @@ def test_cannot_purchase_for_past_competition(
         ),
     )
     assert response.status_code == 403
+
+
+def test_access_points_board(client):
+    """
+    GIVEN a test client
+    WHEN a GET request is sent to '/points_board' page
+    THEN check that:
+    1) A '200' status code is returned
+    2) The response includes the message:
+    'Points Board'
+    3) The response includes the message:
+    'GUDLFT Website'
+    """
+
+    response = client.get('/points_board')
+    assert response.status_code == 200
+    assert b"Points Board" in response.data
+    assert b"GUDLFT Website" in response.data
