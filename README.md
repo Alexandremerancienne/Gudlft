@@ -28,7 +28,7 @@
      
      * [Google Chrome](https://www.google.com/intl/fr/chrome/)
      
-        The Selenium web driver set up for our integration test uses Chrome as search engine.  
+        The Selenium web driver set up for our functional test uses Chrome as search engine.  
 
 
 3. Installation
