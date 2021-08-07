@@ -24,11 +24,11 @@
      
      * [Selenium](https://www.selenium.dev/documentation/en/)
      
-        Selenium allows the automation of web browsers. It is used for our integration test.
+        Selenium allows the automation of web browsers. It is used for our functional test.
      
      * [Google Chrome](https://www.google.com/intl/fr/chrome/)
      
-        The Selenium web driver set up for our integration test uses Chrome as search engine.  
+        The Selenium web driver set up for our functional test uses Chrome as search engine.  
 
 
 3. Installation
@@ -43,7 +43,7 @@
 
     - You should now be ready to test the application. In the directory, type either <code>flask run</code> or <code>python -m flask run</code>. The app should respond with an address you should be able to go to using your browser.
     
-    - As Selenium is used for the integration test, two terminals should be used when testing the application: the first one to launch Flask (see previous point), the second one to launch the tests (we use Pytest).    
+    - As Selenium is used for the functional test, two terminals should be used when testing the application: the first one to launch Flask (see previous point), the second one to launch the tests (we use Pytest).    
 
 4. Current Setup
 
